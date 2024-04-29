@@ -12,11 +12,11 @@ class TaskCreate(BaseModel):  # Define a Pydantic model
 
 app = FastAPI()
 backend_url = os.environ.get("BACKEND_URL", "localhost")
-backend_port = os.environ.get("BACKEND_PORT", 4200)
+frontend_port = os.environ.get("FRONTEND_PORT", 4200)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[f"{backend_url}:{backend_port}"],
+    allow_origins=[f"{backend_url}:{frontend_port}"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -86,5 +86,5 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     backend_host = os.environ.get("BACKEND_HOST", "0.0.0.0")
-    backend_port = os.environ.get("BACKEND_PORT", 4200)
-    uvicorn.run("main:app", host=backend_host, port=int(backend_port), reload=True, log_level="debug", debug=True)
+    container_port = os.environ.get("CONTAINER_PORT", 80)
+    uvicorn.run("main:app", host=backend_host, port=int(container_port), reload=True, log_level="debug", debug=True)
