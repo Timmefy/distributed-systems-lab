@@ -4,6 +4,15 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    environment:
+      - DB_PORT=8181
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PWD=password
+      - DB_NAME=testdb
+      - BACKEND_URL=http://localhost
+      - BACKEND_PORT=4200
+      - BACKEND_HOST=0.0.0.0
     ports:
       - "8000:80"
     depends_on:

@@ -1,18 +1,22 @@
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from .models import Base, Task, engine, SessionLocal
+from models import Base, Task, engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+import os
 
 class TaskCreate(BaseModel):  # Define a Pydantic model
     task: str
     description: str
 
 app = FastAPI()
+backend_url = os.environ.get("BACKEND_URL", "localhost")
+backend_port = os.environ.get("BACKEND_PORT", 4200)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=[f"{backend_url}:{backend_port}"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -79,3 +83,8 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.delete(db_task)
     db.commit()
     return db_task
+
+if __name__ == "__main__":
+    backend_host = os.environ.get("BACKEND_HOST", "0.0.0.0")
+    backend_port = os.environ.get("BACKEND_PORT", 4200)
+    uvicorn.run("main:app", host=backend_host, port=int(backend_port), reload=True, log_level="debug", debug=True)
